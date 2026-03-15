@@ -1,29 +1,11 @@
-/**
- * Copyright 2026 Sydney Anne Reiter
- * @license Apache-2.0, see LICENSE for full text.
- */
 import { LitElement, html, css } from "lit";
 import { DDDSuper } from "@haxtheweb/d-d-d/d-d-d.js";
 
-/*
-  play-list-slide
-  this represents ONE slide
-  it handles layout for:
-  - top heading (small uppercase)
-  - second heading (big title)
-  - scrollable body area (slot)
-*/
 export class PlayListSlide extends DDDSuper(LitElement) {
-  // tag name so you can use <play-list-slide> in HTML
   static get tag() {
     return "play-list-slide";
   }
 
-  /*
-    reactive properties:
-    these come from attributes on the element:
-    <play-list-slide top-heading="..." second-heading="...">
-  */
   static get properties() {
     return {
       ...super.properties,
@@ -34,107 +16,159 @@ export class PlayListSlide extends DDDSuper(LitElement) {
 
   constructor() {
     super();
-    // defaults in case headings are not provided
     this.topHeading = "";
     this.secondHeading = "";
   }
 
-  /*
-    styles:
-    important parts:
-    - fixed height so the body area can scroll
-    - flex layout so headings take natural height and body fills the rest
-    - .body has overflow so the scrollbar appears when content is long
-  */
   static get styles() {
     return [
       super.styles,
       css`
         :host {
+          display: block;
+          width: 100%;
+          height: 100%;
+          box-sizing: border-box;
+          background: transparent;
+        }
+
+        .card {
+          width: 100%;
+          height: 100%;
+          box-sizing: border-box;
           display: flex;
           flex-direction: column;
-          box-sizing: border-box;
-
-          /* fixed height creates the scroll area for the body */
-          height: 260px;
-
-          padding: var(--ddd-spacing-6);
-          background-color: var(--ddd-theme-default-white);
-          color: var(--ddd-theme-default-coalyGray);
-          border-radius: var(--ddd-radius-lg);
+          padding: var(--ddd-spacing-10, 44px)
+            var(--ddd-spacing-12, 56px)
+            var(--ddd-spacing-4, 18px)
+            var(--ddd-spacing-12, 56px);
+          background: transparent;
         }
 
-        /* top line heading (small, uppercase) */
         .top {
-          font-size: var(--ddd-font-size-3xs);
-          letter-spacing: 0.08em;
+          margin: 0;
+          color: #3175bf;
+          font-size: 17px;
+          font-weight: var(--ddd-font-weight-bold, 700);
           text-transform: uppercase;
-          font-weight: var(--ddd-font-weight-bold);
-          color: var(--ddd-theme-default-slateGray);
-          margin: 0 0 var(--ddd-spacing-2) 0;
-
-          /* do not stretch, keep natural height */
-          flex: 0 0 auto;
+          letter-spacing: 0.02em;
         }
 
-        /* main title / sub-heading */
         .title {
-          font-size: var(--ddd-font-size-2xl);
-          font-weight: var(--ddd-font-weight-bold);
-          line-height: 1.1;
-          margin: 0 0 var(--ddd-spacing-4) 0;
-          color: var(--ddd-theme-default-coalyGray);
+          margin: 8px 0 0 0;
+          color: #2a4b8d;
+          font-size: 65px;
+          font-weight: var(--ddd-font-weight-bold, 700);
+          line-height: 1.05;
+          letter-spacing: -0.02em;
+          white-space: nowrap;
+        }
 
-          /* do not stretch, keep natural height */
+        .divider {
+          width: 70px;
+          height: 7px;
+          background: #6fb7e3;
+          border-radius: 999px;
+          margin: 36px 0 14px 0;
+          display: block;
           flex: 0 0 auto;
         }
 
-        /*
-          body content area
-          - flex: 1 makes it take the remaining space
-          - overflow: auto gives a scroll bar when content is long
-          - padding-right gives some space so text doesn't sit on the scrollbar
-        */
         .body {
-          font-size: var(--ddd-font-size-s);
-          line-height: 1.5;
-          overflow: auto;
+          width: 72%;
           flex: 1 1 auto;
-          padding-right: var(--ddd-spacing-2);
-
-          /*
-            firefox scrollbar color
-            (chrome sometimes ignores this, but it's still fine to include)
-          */
-          scrollbar-color: var(--ddd-primary-17) transparent;
+          min-height: 0;
+          overflow-y: auto;
+          overflow-x: hidden;
+          color: #000000;
+          font-size: 17px;
+          line-height: 1.35;
+          margin-top: 0;
+          padding-right: 8px;
+          word-break: break-word;
+          overflow-wrap: anywhere;
         }
 
-        /* mobile tweaks so it still looks usable */
+        .body::-webkit-scrollbar {
+          width: 12px;
+        }
+
+        .body::-webkit-scrollbar-track {
+          background: #e8eaee;
+        }
+
+        .body::-webkit-scrollbar-thumb {
+          background-color: #a6aebe;
+          border-radius: 20px;
+          border: 3px solid #e8eaee;
+        }
+
+        .body ::slotted(*) {
+          margin: 0;
+        }
+
+        .body ::slotted(p) {
+          margin: 0;
+        }
+
+        @media (max-width: 900px) {
+          .card {
+            padding: 34px 38px 28px 38px;
+          }
+
+          .title {
+            max-width: 72%;
+          }
+
+          .body {
+            width: 78%;
+          }
+        }
+
         @media (max-width: 700px) {
-          :host {
-            height: 220px;
-            padding: var(--ddd-spacing-4);
+          .card {
+            padding: 24px 24px 18px 24px;
+          }
+
+          .top {
+            font-size: 13px;
+          }
+
+          .title {
+            font-size: 2.4rem;
+            max-width: 100%;
+            margin-top: 8px;
+            white-space: normal;
+          }
+
+          .divider {
+            width: 120px;
+            margin: 14px 0 6px 0;
+          }
+
+          .body {
+            width: 100%;
+            font-size: 15px;
+            line-height: 1.4;
+            padding-right: 8px;
           }
         }
       `,
     ];
   }
 
-  /*
-    render:
-    - headings come from attributes
-    - slot holds whatever content the user puts in the slide
-  */
   render() {
     return html`
-      <p class="top">${this.topHeading}</p>
-      <h2 class="title">${this.secondHeading}</h2>
-      <div class="body">
-        <slot></slot>
+      <div class="card">
+        <p class="top">${this.topHeading}</p>
+        <h2 class="title">${this.secondHeading}</h2>
+        <div class="divider"></div>
+        <div class="body">
+          <slot></slot>
+        </div>
       </div>
     `;
   }
 }
 
-// register the custom element with the browser
 globalThis.customElements.define(PlayListSlide.tag, PlayListSlide);
